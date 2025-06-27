@@ -15,73 +15,8 @@ const Input = ({
   className = '',
   ...props
 }) => {
-  const [focused, setFocused] = useState(false);
+const [focused, setFocused] = useState(false);
   const hasValue = value && value.toString().length > 0;
-
-  // Utility functions for 12-hour format conversion
-  const formatTo12Hour = (dateTimeValue) => {
-    if (!dateTimeValue || type !== 'datetime-local') return dateTimeValue;
-    
-    try {
-      const date = new Date(dateTimeValue);
-      if (isNaN(date.getTime())) return dateTimeValue;
-      
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      let hours = date.getHours();
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // 0 should be 12
-      const displayHours = String(hours).padStart(2, '0');
-      
-      return `${year}-${month}-${day}T${displayHours}:${minutes} ${ampm}`;
-    } catch {
-      return dateTimeValue;
-    }
-  };
-
-  const parseFrom12Hour = (displayValue) => {
-    if (!displayValue || type !== 'datetime-local') return displayValue;
-    
-    try {
-      const match = displayValue.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})\s*(AM|PM)$/i);
-      if (!match) return displayValue;
-      
-      const [, year, month, day, hours, minutes, ampm] = match;
-      let hour24 = parseInt(hours, 10);
-      
-      if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
-        hour24 += 12;
-      } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
-        hour24 = 0;
-      }
-      
-      return `${year}-${month}-${day}T${String(hour24).padStart(2, '0')}:${minutes}`;
-    } catch {
-      return displayValue;
-    }
-  };
-
-  const handleInputChange = (e) => {
-    if (type === 'datetime-local') {
-      const parsed24Hour = parseFrom12Hour(e.target.value);
-      const syntheticEvent = {
-        ...e,
-        target: {
-          ...e.target,
-          value: parsed24Hour
-        }
-      };
-      onChange(syntheticEvent);
-    } else {
-      onChange(e);
-    }
-  };
-
-  const displayValue = type === 'datetime-local' ? formatTo12Hour(value) : (value || '');
 
   return (
     <div className={`relative ${className}`}>
@@ -98,9 +33,9 @@ const Input = ({
         )}
         
 <input
-          type={type === 'datetime-local' ? 'text' : type}
-          value={displayValue}
-          onChange={handleInputChange}
+          type={type}
+          value={value || ''}
+onChange={onChange}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           disabled={disabled}
