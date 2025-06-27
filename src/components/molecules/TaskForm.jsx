@@ -1,13 +1,24 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { format, parse } from 'date-fns';
 import Input from '@/components/atoms/Input';
 import Button from '@/components/atoms/Button';
 import ApperIcon from '@/components/ApperIcon';
-
 const TaskForm = ({ onSubmit, onCancel, initialData = null }) => {
+  // Utility function to format datetime for display
+  const formatDateTimeForDisplay = (dateString) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return date.toISOString().slice(0, 16);
+    } catch (error) {
+      return '';
+    }
+  };
+
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
-    dueDate: initialData?.dueDate ? new Date(initialData.dueDate).toISOString().slice(0, 16) : '',
+    dueDate: formatDateTimeForDisplay(initialData?.dueDate),
     priority: initialData?.priority || 'medium',
     checklist: initialData?.checklist || []
   });
@@ -101,15 +112,20 @@ const TaskForm = ({ onSubmit, onCancel, initialData = null }) => {
         required
       />
 
-      <Input
-        label="Due Date & Time"
-        type="datetime-local"
-        value={formData.dueDate}
-        onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-        error={errors.dueDate}
-        icon="Calendar"
-        required
-      />
+<div>
+        <label className="block text-sm font-medium text-surface-700 mb-2">
+          Due Date & Time
+          <span className="text-xs text-surface-500 ml-1">(12-hour format)</span>
+        </label>
+        <Input
+          type="datetime-local"
+          value={formData.dueDate}
+          onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
+          error={errors.dueDate}
+          icon="Calendar"
+          required
+        />
+      </div>
 
       <div>
         <label className="block text-sm font-medium text-surface-700 mb-3">
