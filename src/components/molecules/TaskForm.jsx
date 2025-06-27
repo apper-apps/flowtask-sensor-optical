@@ -115,7 +115,7 @@ const TaskForm = ({ onSubmit, onCancel, initialData = null }) => {
 <div>
         <label className="block text-sm font-medium text-surface-700 mb-2">
           Due Date & Time
-          <span className="text-xs text-surface-500 ml-1">(12-hour format)</span>
+          <span className="text-xs text-surface-500 ml-1">(24-hour format: HH:MM)</span>
         </label>
         <Input
           type="datetime-local"
